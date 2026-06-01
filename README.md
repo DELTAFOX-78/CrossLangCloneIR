@@ -191,6 +191,11 @@ A full end-to-end demonstration of the project is recorded as a step-by-step vis
 
 Or play the embedded demonstration video directly:
 
+
+https://github.com/user-attachments/assets/8e9b3bd9-eef4-4cb4-bc17-13b2d484c684
+
+
+
 <video src="demo.mp4" controls width="100%"></video>
 
 ---
