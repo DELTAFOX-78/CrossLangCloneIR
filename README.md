@@ -183,7 +183,7 @@ We compare our pipeline (**LLVM IR + Graph Hashing**) against two baseline appro
 
 ---
 
-## 🎥 Demonstration Video & Screenshots
+## 🎥 Demonstration Video
 
 A full end-to-end demonstration of the project is recorded as a step-by-step visual guide:
 
