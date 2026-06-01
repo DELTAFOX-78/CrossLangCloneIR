@@ -103,5 +103,10 @@
         "file1": "corpus/c/factorial.c",
         "file2": "corpus/rust/factorial.rs",
         "expected_similarity": "strong_clone"
+    },
+    {
+        "file1": "corpus/c/factorial.c",
+        "file2": "corpus/rust/bubblesort.rs",
+        "expected_similarity": "not_clone"
     }
 ]
