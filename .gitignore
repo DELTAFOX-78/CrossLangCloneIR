@@ -1,0 +1,34 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C/C++ compiled binaries
+*.o
+*.out
+*.exe
+
+# Gradle artifacts
+.gradle/
+build/
+cpg/build/
+src/cpg/build/
+src/cpg/.gradle/
+
+# Pipeline generated directories
+ir/
+normalized_ir/
+graphs/
+fingerprints/
+evaluation/
+temp_run/
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo

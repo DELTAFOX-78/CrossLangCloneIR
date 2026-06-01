@@ -1,0 +1,102 @@
+[
+    {
+        "file1": "testcases/c/factorial.c",
+        "file2": "testcases/cpp/factorial.cpp",
+        "expected_similarity": "strong_clone"
+    },
+    {
+        "file1": "testcases/c/factorial.c",
+        "file2": "testcases/rust/factorial.rs",
+        "expected_similarity": "strong_clone"
+    },
+    {
+        "file1": "testcases/c/fibonacci.c",
+        "file2": "testcases/cpp/fibonacci.cpp",
+        "expected_similarity": "strong_clone"
+    },
+    {
+        "file1": "testcases/c/fibonacci.c",
+        "file2": "testcases/rust/fibonacci.rs",
+        "expected_similarity": "strong_clone"
+    },
+    {
+        "file1": "testcases/c/bubble_sort.c",
+        "file2": "testcases/cpp/bubble_sort.cpp",
+        "expected_similarity": "strong_clone"
+    },
+    {
+        "file1": "testcases/c/bubble_sort.c",
+        "file2": "testcases/rust/bubble_sort.rs",
+        "expected_similarity": "strong_clone"
+    },
+    {
+        "file1": "testcases/c/is_prime.c",
+        "file2": "testcases/cpp/is_prime.cpp",
+        "expected_similarity": "strong_clone"
+    },
+    {
+        "file1": "testcases/c/is_prime.c",
+        "file2": "testcases/rust/is_prime.rs",
+        "expected_similarity": "strong_clone"
+    },
+    {
+        "file1": "testcases/c/reverse_string.c",
+        "file2": "testcases/cpp/reverse_string.cpp",
+        "expected_similarity": "strong_clone"
+    },
+    {
+        "file1": "testcases/c/reverse_string.c",
+        "file2": "testcases/rust/reverse_string.rs",
+        "expected_similarity": "strong_clone"
+    },
+    {
+        "file1": "testcases/c/factorial.c",
+        "file2": "testcases/c/fibonacci.c",
+        "expected_similarity": "not_clone"
+    },
+    {
+        "file1": "testcases/c/factorial.c",
+        "file2": "testcases/c/bubble_sort.c",
+        "expected_similarity": "not_clone"
+    },
+    {
+        "file1": "testcases/c/factorial.c",
+        "file2": "testcases/c/is_prime.c",
+        "expected_similarity": "not_clone"
+    },
+    {
+        "file1": "testcases/c/factorial.c",
+        "file2": "testcases/c/reverse_string.c",
+        "expected_similarity": "not_clone"
+    },
+    {
+        "file1": "testcases/c/fibonacci.c",
+        "file2": "testcases/c/bubble_sort.c",
+        "expected_similarity": "not_clone"
+    },
+    {
+        "file1": "testcases/c/fibonacci.c",
+        "file2": "testcases/c/is_prime.c",
+        "expected_similarity": "not_clone"
+    },
+    {
+        "file1": "testcases/c/fibonacci.c",
+        "file2": "testcases/c/reverse_string.c",
+        "expected_similarity": "not_clone"
+    },
+    {
+        "file1": "testcases/c/bubble_sort.c",
+        "file2": "testcases/c/is_prime.c",
+        "expected_similarity": "not_clone"
+    },
+    {
+        "file1": "testcases/c/bubble_sort.c",
+        "file2": "testcases/c/reverse_string.c",
+        "expected_similarity": "not_clone"
+    },
+    {
+        "file1": "testcases/c/is_prime.c",
+        "file2": "testcases/c/reverse_string.c",
+        "expected_similarity": "not_clone"
+    }
+]

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrossLangCloneIR — Cross-Language Code Clone Semantic Analyzer</title>
+    
+    <!-- Premium Typography & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Prism.js Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    
+    <!-- Vis.js Network Graphs -->
+    <link rel="stylesheet" href="https://unpkg.com/vis-network/standalone/umd/vis-network.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <!-- Premium Glowing Background Effects -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+
+    <div class="app-container">
+        <!-- Navigation Header -->
+        <header class="app-header glass">
+            <div class="brand">
+                <div class="brand-logo">
+                    <i class="fa-solid fa-square-poll-vertical logo-icon"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>CrossLangCloneIR</h1>
+                    <p>Cross-Language Code Clone Analyzer</p>
+                </div>
+            </div>
+            
+            <nav class="nav-tabs">
+                <button class="nav-tab-btn active" id="tab-btn-compare" onclick="switchTab('compare')">
+                    <i class="fa-solid fa-code-compare"></i> Compare Suite
+                </button>
+                <button class="nav-tab-btn" id="tab-btn-corpus" onclick="switchTab('corpus')">
+                    <i class="fa-solid fa-folder-tree"></i> Corpus Explorer
+                </button>
+                <button class="nav-tab-btn" id="tab-btn-eval" onclick="switchTab('eval')">
+                    <i class="fa-solid fa-chart-line"></i> Evaluation Center
+                </button>
+            </nav>
+            
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="btn-reanalyze" onclick="runGlobalAnalysis()">
+                    <i class="fa-solid fa-rotate"></i> Run Full Pipeline
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Body -->
+        <main class="app-content">
+            
+            <!-- 1. COMPARE SUITE TAB -->
+            <section id="tab-compare" class="tab-pane active">
+                <div class="workspace-grid">
+                    <!-- Sidebar Controls -->
+                    <div class="pane-controls glass">
+                        <h3><i class="fa-solid fa-sliders"></i> Comparison Settings</h3>
+                        <hr class="divider">
+                        
+                        <div class="control-group">
+                            <label for="template-select">Load Standard Algorithm</label>
+                            <select id="template-select" onchange="loadTemplate()">
+                                <option value="factorial" selected>Factorial (C, C++, Rust)</option>
+                                <option value="fibonacci">Fibonacci Series (Recursive)</option>
+                                <option value="bubblesort">Bubble Sort (Iterative Array)</option>
+                                <option value="custom">Custom Scratchpad...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>Similarity Threshold</label>
+                            <div class="slider-container">
+                                <input type="range" id="threshold-slider" min="0.5" max="1.0" step="0.05" value="0.85" oninput="updateThresholdValue(this.value)">
+                                <span class="slider-val" id="threshold-val">0.85</span>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary btn-block" id="btn-compare-run" onclick="executeComparison()">
+                            <i class="fa-solid fa-bolt"></i> Run Semantic Score
+                        </button>
+                        
+                        <div class="pipeline-card">
+                            <h4>Pipeline Stages</h4>
+                            <ul class="pipeline-steps">
+                                <li id="step-ir" class="step pending"><i class="fa-solid fa-spinner fa-spin"></i> LLVM IR Emit</li>
+                                <li id="step-norm" class="step pending"><i class="fa-solid fa-spinner fa-spin"></i> IR Normalization</li>
+                                <li id="step-cpg" class="step pending"><i class="fa-solid fa-spinner fa-spin"></i> CPG CFG/DFG Parse</li>
+                                <li id="step-hash" class="step pending"><i class="fa-solid fa-spinner fa-spin"></i> WL Graph Hash</li>
+                                <li id="step-score" class="step pending"><i class="fa-solid fa-spinner fa-spin"></i> Similarity Engine</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Code Editor Panes -->
+                    <div class="code-editor-section">
+                        <div class="editor-pane glass">
+                            <div class="pane-header">
+                                <div class="file-info">
+                                    <span class="file-badge badge-c" id="lang-badge-1">C</span>
+                                    <h4 id="file-title-1">factorial.c</h4>
+                                </div>
+                                <div class="pane-actions">
+                                    <input type="file" id="file-input-1" style="display:none;" onchange="handleFileSelected(1, this)">
+                                    <button class="btn-secondary" style="padding: 4px 8px; font-size: 11px; font-weight: 600;" title="Upload custom code file" onclick="triggerFileUploader(1)">
+                                        <i class="fa-solid fa-upload"></i> Upload
+                                    </button>
+                                    <select id="lang-select-1" onchange="changeLanguage(1, this.value)">
+                                        <option value="c" selected>C</option>
+                                        <option value="cpp">C++</option>
+                                        <option value="rust">Rust</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="editor-body">
+                                <textarea id="code-textarea-1" class="code-editor-area" spellcheck="false" oninput="syncCodeDisplay(1)"></textarea>
+                                <pre class="code-display"><code id="code-block-1" class="language-c"></code></pre>
+                            </div>
+                        </div>
+
+                        <div class="editor-pane glass">
+                            <div class="pane-header">
+                                <div class="file-info">
+                                    <span class="file-badge badge-rust" id="lang-badge-2">RUST</span>
+                                    <h4 id="file-title-2">factorial.rs</h4>
+                                </div>
+                                <div class="pane-actions">
+                                    <input type="file" id="file-input-2" style="display:none;" onchange="handleFileSelected(2, this)">
+                                    <button class="btn-secondary" style="padding: 4px 8px; font-size: 11px; font-weight: 600;" title="Upload custom code file" onclick="triggerFileUploader(2)">
+                                        <i class="fa-solid fa-upload"></i> Upload
+                                    </button>
+                                    <select id="lang-select-2" onchange="changeLanguage(2, this.value)">
+                                        <option value="c">C</option>
+                                        <option value="cpp">C++</option>
+                                        <option value="rust" selected>Rust</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="editor-body">
+                                <textarea id="code-textarea-2" class="code-editor-area" spellcheck="false" oninput="syncCodeDisplay(2)"></textarea>
+                                <pre class="code-display"><code id="code-block-2" class="language-rust"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comparison Score & HUD -->
+                    <div class="hud-pane glass">
+                        <div class="hud-score-card">
+                            <h3>Similarity Score</h3>
+                            <div class="radial-progress-container">
+                                <svg class="radial-svg" viewBox="0 0 100 100">
+                                    <circle class="radial-bg" cx="50" cy="50" r="40"></circle>
+                                    <circle class="radial-bar" id="score-radial-bar" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="251.2"></circle>
+                                </svg>
+                                <div class="score-overlay">
+                                    <span class="score-number" id="score-text">--%</span>
+                                    <span class="score-label" id="score-class-label">No Match</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="hud-breakdown">
+                            <h4>Similarity Breakdown</h4>
+                            <hr class="divider">
+                            <div class="breakdown-stat">
+                                <div class="stat-meta">
+                                    <span>Control Flow Graph (40%)</span>
+                                    <span id="cfg-sim-text">--</span>
+                                </div>
+                                <div class="stat-progress-bar">
+                                    <div class="bar-fill" id="cfg-sim-fill" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="breakdown-stat">
+                                <div class="stat-meta">
+                                    <span>Data Flow Graph (40%)</span>
+                                    <span id="dfg-sim-text">--</span>
+                                </div>
+                                <div class="stat-progress-bar">
+                                    <div class="bar-fill" id="dfg-sim-fill" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="breakdown-stat">
+                                <div class="stat-meta">
+                                    <span>Opcode Bag-of-Words (20%)</span>
+                                    <span id="opcode-sim-text">--</span>
+                                </div>
+                                <div class="stat-progress-bar">
+                                    <div class="bar-fill" id="opcode-sim-fill" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deep Visualization Panels (IRs and Graph Visualizations) -->
+                <div class="visualization-tabs glass">
+                    <div class="vis-tabs-header">
+                        <button class="vis-tab-btn active" onclick="switchVisTab('raw-ir')">Raw LLVM IR</button>
+                        <button class="vis-tab-btn" onclick="switchVisTab('norm-ir')">Normalized LLVM IR</button>
+                        <button class="vis-tab-btn" onclick="switchVisTab('cfg-graph')">Control Flow Graph (CFG)</button>
+                        <button class="vis-tab-btn" onclick="switchVisTab('dfg-graph')">Data Flow Graph (DFG)</button>
+                    </div>
+                    
+                    <div class="vis-tabs-content">
+                        <!-- Tab: Raw IR -->
+                        <div class="vis-pane active" id="vis-raw-ir">
+                            <div class="split-code-view">
+                                <div class="ir-box">
+                                    <h5>LLVM IR (Input 1)</h5>
+                                    <pre><code class="language-llvm" id="raw-ir-block-1">; Click 'Run Semantic Score' to emit IR</code></pre>
+                                </div>
+                                <div class="ir-box">
+                                    <h5>LLVM IR (Input 2)</h5>
+                                    <pre><code class="language-llvm" id="raw-ir-block-2">; Click 'Run Semantic Score' to emit IR</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab: Normalized IR -->
+                        <div class="vis-pane" id="vis-norm-ir">
+                            <div class="split-code-view">
+                                <div class="ir-box">
+                                    <h5>Normalized IR (Input 1)</h5>
+                                    <pre><code class="language-llvm" id="norm-ir-block-1">; Click 'Run Semantic Score' to generate</code></pre>
+                                </div>
+                                <div class="ir-box">
+                                    <h5>Normalized IR (Input 2)</h5>
+                                    <pre><code class="language-llvm" id="norm-ir-block-2">; Click 'Run Semantic Score' to generate</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab: CFG Graph -->
+                        <div class="vis-pane" id="vis-cfg-graph">
+                            <div class="split-graph-view">
+                                <div class="graph-box">
+                                    <h5>CFG: Input 1</h5>
+                                    <div class="graph-container" id="cfg-network-1"></div>
+                                </div>
+                                <div class="graph-box">
+                                    <h5>CFG: Input 2</h5>
+                                    <div class="graph-container" id="cfg-network-2"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab: DFG Graph -->
+                        <div class="vis-pane" id="vis-dfg-graph">
+                            <div class="split-graph-view">
+                                <div class="graph-box">
+                                    <h5>DFG: Input 1</h5>
+                                    <div class="graph-container" id="dfg-network-1"></div>
+                                </div>
+                                <div class="graph-box">
+                                    <h5>DFG: Input 2</h5>
+                                    <div class="graph-container" id="dfg-network-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 2. CORPUS EXPLORER TAB -->
+            <section id="tab-corpus" class="tab-pane">
+                <div class="corpus-grid">
+                    <!-- File Explorer Tree -->
+                    <div class="corpus-sidebar glass">
+                        <h3><i class="fa-solid fa-folder-open"></i> Repository Files</h3>
+                        <p class="subtext">Browse current static files in corpus</p>
+                        <hr class="divider">
+                        <div class="file-list" id="corpus-file-list">
+                            <!-- Dynamically Loaded -->
+                            <div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i> Loading repository corpus...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Detailed File Inspector Pane -->
+                    <div class="corpus-inspector glass">
+                        <div class="inspector-header">
+                            <div>
+                                <h3 id="inspect-title">Select a file from the explorer</h3>
+                                <p id="inspect-meta">Language, Size, and Pipeline Stage details will appear here</p>
+                            </div>
+                            <div id="inspect-actions">
+                                <!-- Actions -->
+                            </div>
+                        </div>
+                        <hr class="divider">
+                        <div class="inspector-content">
+                            <div class="inspector-tab-headers">
+                                <button class="ins-tab-btn active" onclick="switchInspectorTab('source')">Source Code</button>
+                                <button class="ins-tab-btn" onclick="switchInspectorTab('ir')">LLVM IR</button>
+                                <button class="ins-tab-btn" onclick="switchInspectorTab('norm')">Normalized IR</button>
+                                <button class="ins-tab-btn" onclick="switchInspectorTab('fingerprint')">Fingerprint JSON</button>
+                            </div>
+                            <div class="inspector-tab-content">
+                                <div class="ins-pane active" id="ins-source">
+                                    <pre><code class="" id="ins-source-code">// Select a file to inspect</code></pre>
+                                </div>
+                                <div class="ins-pane" id="ins-ir">
+                                    <pre><code class="language-llvm" id="ins-ir-code">; Compile file to emit intermediate LLVM IR</code></pre>
+                                </div>
+                                <div class="ins-pane" id="ins-norm">
+                                    <pre><code class="language-llvm" id="ins-norm-code">; Normalize compiled LLVM IR to canonical logic structure</code></pre>
+                                </div>
+                                <div class="ins-pane" id="ins-fingerprint">
+                                    <pre><code class="language-json" id="ins-fingerprint-code">{ "status": "No file selected" }</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 3. EVALUATION TAB -->
+            <section id="tab-eval" class="tab-pane">
+                <div class="eval-grid">
+                    <!-- Summary Metric Cards -->
+                    <div class="metric-row">
+                        <div class="metric-card glass">
+                            <div class="metric-icon val-f1"><i class="fa-solid fa-award"></i></div>
+                            <div class="metric-info">
+                                <h2 id="eval-f1-val">--</h2>
+                                <p>F1 Score</p>
+                            </div>
+                        </div>
+                        <div class="metric-card glass">
+                            <div class="metric-icon val-prec"><i class="fa-solid fa-circle-check"></i></div>
+                            <div class="metric-info">
+                                <h2 id="eval-precision-val">--</h2>
+                                <p>Precision</p>
+                            </div>
+                        </div>
+                        <div class="metric-card glass">
+                            <div class="metric-icon val-rec"><i class="fa-solid fa-bullseye"></i></div>
+                            <div class="metric-info">
+                                <h2 id="eval-recall-val">--</h2>
+                                <p>Recall</p>
+                            </div>
+                        </div>
+                        <div class="metric-card glass">
+                            <div class="metric-icon val-tp"><i class="fa-solid fa-chart-bar"></i></div>
+                            <div class="metric-info">
+                                <h2 id="eval-tp-val">--</h2>
+                                <p>True Clones (TP)</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Table showing ground-truth validation pairs -->
+                    <div class="eval-details glass">
+                        <div class="eval-details-header">
+                            <h3><i class="fa-solid fa-list-check"></i> Expected Pairs Validation Suite</h3>
+                            <button class="btn btn-secondary" onclick="fetchEvaluationReport()">
+                                <i class="fa-solid fa-rotate-right"></i> Refresh Stats
+                            </button>
+                        </div>
+                        <p class="subtext">Evaluates precision and recall on positive and negative cross-language clones from the corpus according to <code>corpus/expected_pairs.json</code>.</p>
+                        <hr class="divider">
+                        
+                        <div class="table-container">
+                            <table class="data-table" id="eval-pairs-table">
+                                <thead>
+                                    <tr>
+                                        <th>File A</th>
+                                        <th>File B</th>
+                                        <th>Score</th>
+                                        <th>Target Status</th>
+                                        <th>Detection Outcome</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dynamically Filled -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+        </main>
+        
+        <!-- Premium Global Toast Notifications -->
+        <div class="toast-container" id="toast-container"></div>
+    </div>
+
+    <!-- CDNs and core dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-llvm.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    
+    <!-- App JavaScript Logic -->
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+networkx
+numpy
+scipy
+click
+matplotlib
+pytest
+flask
+flask-cors
