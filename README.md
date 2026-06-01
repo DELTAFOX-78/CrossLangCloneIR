@@ -49,27 +49,93 @@ CrossLangCloneIR/
 ├── .gitignore                   # Exclude list for pipeline artifacts
 └── README.md                    # Comprehensive pipeline, design, and evaluation documentation
 ```
+---
+
+## 📚 Documentation
+
+| Document | Contents |
+|----------|----------|
+| [DESIGN.md](DESIGN.md) | Problem framing, theoretical foundations, alternatives compared |
+| [IMPLEMENTATION.md](IMPLEMENTATION.md) | LLVM/Clang emission flags, regex IRNormalizer, and Kotlin CPG parsing |
+| [EVALUATION.md](EVALUATION.md) | Precision/recall metrics, 3-way baseline comparison, 15 curated test cases |
 
 ---
 
-## 🛠️ Pipeline Architecture
+## 🛠️ Pipeline Architecture & Flowcharts
 
-The semantic clone detection pipeline operates in five stages:
+The semantic clone detection pipeline operates in five automated stages to lift source code into canonical structural graphs:
 
 ```mermaid
-graph TD
-    A[C / C++ / Rust Source] -->|Stage 1: Clang / Rustc| B[LLVM IR]
-    B -->|Stage 2: IR Normalizer| C[Normalized IR]
-    C -->|Stage 3: CPG Extractor| D[CFG & DFG Graph JSONs]
-    D -->|Stage 4: WL Fingerprinter| E[Graph Fingerprints]
-    E -->|Stage 5: Similarity Scorer| F[Clone Detection & Metrics]
+flowchart TD
+    A[C / C++ / Rust Source] --> B
+
+    subgraph P1["Stage 1 · Clang / Rustc"]
+        B[clang -S -emit-llvm\nrustc --emit=llvm-ir] --> C[parse LLVM Assembly]
+        C --> D[raw_ir/\nLanguage-neutral IR text]
+    end
+
+    subgraph P2["Stage 2 · IRNormalizer"]
+        D --> E[strip debug metadata + target datalayouts]
+        E --> F[sequential SSA variable mapping\n%1, %a -> %VAR_1, %VAR_2]
+        F --> G[normalized_ir/\nCanonicalized SSA blocks]
+    end
+
+    subgraph P3["Stage 3 · CPG Extractor"]
+        G --> H[Kotlin Fraunhofer CPG / Python Fallback]
+        H --> I[graphs/cfg & graphs/dfg\nCFG + DFG JSON representations]
+    end
+
+    subgraph P4["Stage 4 · Graph Fingerprinter"]
+        I --> J[Weisfeiler-Lehman Graph Kernel]
+        J --> K[fingerprints/\nWL graph MD5 + Opcode signatures]
+    end
+
+    subgraph P5["Stage 5 · Similarity Scorer"]
+        K --> L[weighted similarity formula]
+        L --> M{Score >= Threshold?}
+        M -->|yes| N[CLONE DETECTED]
+        M -->|no| O[NOT A CLONE]
+    end
+
+    N & O --> UI[Flask Visual Web UI · server.py\nInteractive side-by-side graph explorer]
 ```
 
-1. **LLVM IR Generation**: Translates high-level source files into LLVM Intermediate Representation, resolving syntax variations.
-2. **IR Normalization**: Strips debug locations and compiler attributes, and canonicalizes SSA temporary variable names.
-3. **Graph Property Extraction**: Extracts the Control Flow Graph (CFG) and Data Flow Graph (DFG) as a unified Code Property Graph (CPG).
-4. **WL Fingerprinting**: Computes Weisfeiler-Lehman (WL) graph hashes and bag-of-words opcode signatures.
-5. **Similarity Scoring**: Computes a weighted similarity index to classify clone pairs.
+1. **LLVM IR Generation**: Translates C, C++, and Rust source codes down into shared intermediate LLVM assembly instructions.
+2. **IR Normalization**: Eliminates compiler-dependent variable styles, debug annotations, and target metadata sequentially.
+3. **Graph Extraction**: Parses basic blocks and SSA variable definitions to generate Control Flow and Data Flow dependency trees.
+4. **WL Fingerprinting**: Computes Weisfeiler-Lehman (WL) neighborhood aggregation graph isomorphism hashes and opcode signatures.
+5. **Weighted Scoring**: Evaluates similarities based on exact and approximate topology match rates.
+
+### Weisfeiler-Lehman (WL) Graph Kernels
+To verify graph structural isomorphisms in linear time, each CFG and DFG is processed via iterative neighborhood hashing:
+
+```mermaid
+flowchart LR
+    A["Node Opcode type\nl(0)(v)"] --> B{"Aggregate successor\nneighbor labels"}
+    B --> C["Sort & concatenate\nconc(l(i-1)(v) || neighbor labels)"]
+    C --> D["Hash string\nl(i)(v) = MD5(conc)[:8]"]
+    D --> E["Aggregate all node\nlabels into signature"]
+```
+
+### Design Decision Taxonomy
+Compiling sources and performing graph-level topological checks provides syntactic independence:
+
+```mermaid
+flowchart TD
+    GOAL["Detect semantic clones across C, C++, and Rust"] --> Q1
+
+    Q1{"Is source-level syntax\nsufficient for comparison?"}
+    Q1 -->|"Source text Jaccard"| Text_Bad["❌ Fails completely — keywords and\ngrammars are entirely language-dependent"]
+    Q1 -->|"LLVM IR Compilation"| P1_OK["✅ Stage 1 & 2\nTranslates diverse syntaxes into\ncompiler-independent instructions"]
+
+    P1_OK --> Q2{"Are instruction counts\nsufficient to classify?"}
+    Q2 -->|"Opcode Jaccard"| Opcode_Bad["❌ Imprecise — misses control flows;\nflags different recursive structures as clones"]
+    Q2 -->|"Graph Extractor"| P3_OK["✅ Stage 3\nExtracts explicit Control Flow (CFG)\nand Data Flow (DFG) trees"]
+
+    P3_OK --> Q3{"How to compare graph structures\nin permutation-invariant time?"}
+    Q3 -->|"AST similarity"| AST_Bad["❌ Language specific; does not support\nnode isomorphism checks"]
+    Q3 -->|"Weisfeiler-Lehman Hashing"| P4_OK["✅ Stage 4 & 5\nIterative neighborhood node label\naggregation + weighted Jaccard score"]
+```
 
 ---
 
