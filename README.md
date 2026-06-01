@@ -6,16 +6,49 @@ This document outlines the pipeline architecture, setup instructions, algorithmi
 
 ---
 
-## 📂 Repository Contents & Structure
+## 📂 Repository Layout
 
-- `src/`: Core Python modules and Kotlin CPG codebases.
-  - `src/cli/`: Unified command-line interface tools and fallback IR graph extractors.
-  - `src/similarity/`: Core weighted graph similarity engines.
-  - `src/evaluation/`: Metric computation scripts and expected pair checkers.
-  - `src/web/`: Visual Flask server and dashboard static web files.
-  - `src/cpg/`: Kotlin CPG parser Gradle sub-project.
-- `testcases/`: Benchmark suite containing C, C++, and Rust implementations for 5 distinct algorithms.
-- `scripts/`: Platform wrappers (`build.sh`, `run.sh`, `build.bat`, `run.bat`) for automated pipeline execution.
+```text
+CrossLangCloneIR/
+├── src/                         # Core Python modules and CPG components
+│   ├── cli/                     # Command-line interface and fallback IR graph parser
+│   │   ├── graph_extractor.py   # High-fidelity semantic graph fallback extractor
+│   │   ├── ir_generator.py      # LLVM IR compilation and pseudo-IR generator
+│   │   ├── ir_normalizer.py     # Compiler metadata and variable normalizer
+│   │   └── main.py              # Unified CLI execution manager
+│   ├── cpg/                     # Fraunhofer Code Property Graph extractor
+│   │   ├── src/main/kotlin/     # Kotlin AST / CFG / DFG parser source
+│   │   └── build.gradle.kts     # Gradle JVM sub-project configuration
+│   ├── fingerprints/            # Weisfeiler-Lehman fingerprinter module
+│   │   └── fingerprinter.py     # Graph WL kernel and opcode bag generator
+│   ├── similarity/              # Similarity scoring engine
+│   │   └── scorer.py            # Weighted Jaccard and graph matching formula
+│   ├── evaluation/              # Quantitative evaluation module
+│   │   └── evaluator.py         # Precision, recall, and F1-score metric runner
+│   └── web/                     # Visual Flask web application
+│       ├── static/              # Interactive frontend (Prism.js + vis.js)
+│       │   ├── index.html       # Sidebar options, visual loaders, and graph tabs
+│       │   ├── app.js           # Client actions, async API requests, and fit() centering
+│       │   └── app.css          # Glassmorphic CSS layout styling
+│       └── server.py            # Flask server API endpoints and routes
+├── testcases/                   # 5-algorithm cross-language test suite (15 files)
+│   ├── c/                       # C source code files (factorial, fibonacci, sort, prime, reverse)
+│   ├── cpp/                     # C++ source code files (factorial, fibonacci, sort, prime, reverse)
+│   ├── rust/                    # Rust source code files (factorial, fibonacci, sort, prime, reverse)
+│   └── expected_pairs.json      # Ground-truth similarity classifications
+├── scripts/                     # Platform automation scripts
+│   ├── build.sh                 # Linux pipeline dependency and directory builder
+│   ├── run.sh                   # Linux end-to-end analytical runner
+│   ├── build.bat                # Windows pipeline dependency and directory builder
+│   └── run.bat                  # Windows end-to-end analytical runner
+├── build.sh                     # Main Linux build entrypoint
+├── run.sh                       # Main Linux run entrypoint
+├── build.bat                    # Main Windows build entrypoint
+├── run.bat                      # Main Windows run entrypoint
+├── requirements.txt             # Python requirements (flask, click, networkx)
+├── .gitignore                   # Exclude list for pipeline artifacts
+└── README.md                    # Comprehensive pipeline, design, and evaluation documentation
+```
 
 ---
 
