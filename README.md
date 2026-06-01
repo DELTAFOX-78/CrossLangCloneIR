@@ -180,3 +180,45 @@ We compare our pipeline (**LLVM IR + Graph Hashing**) against two baseline appro
 2. **Opcode-Only (Baseline B)**: Blind to control flow paths, resulting in false positives (like mismatching different recursive structures) and achieving a low 70.0% F1-score.
 3. **Our Graph Pipeline (Fallback)**: Grouping loops and swaps under AST heuristics leads to a single False Positive (semantic Type-4 clone match between Bubble Sort and String Reversal), achieving a highly respectable **95.24% F1-score**.
 4. **Our Graph Pipeline (Native)**: Compiling actual instruction blocks maps isomorphic layouts to identical signatures across C, C++, and Rust while safely separating different algorithms, achieving a **100.00% F1-score**.
+
+---
+
+## 🎥 Demonstration Video & Screenshots
+
+A full end-to-end demonstration of the project is recorded as a step-by-step visual guide:
+
+- **[Watch the Demonstration Video](demo.mp4)**: Play the demonstration video by downloading or opening `demo.mp4` in the root of the repository.
+
+Or play the embedded demonstration video directly:
+
+<video src="demo.mp4" controls width="100%"></video>
+
+---
+
+## 🧪 Pipeline Verification Guide
+
+To quickly execute the pipeline and verify the clone detection performance (confirming that the computed F1-score matches the reported metrics), follow these two steps:
+
+### 1. Build and Setup Environment
+Execute the build wrapper to install all Python library dependencies and prepare required directory paths:
+- **Windows**: Run `build.bat` in your terminal.
+- **Linux/macOS/WSL**: Run `./build.sh` in your bash terminal.
+
+### 2. Run Pipeline & Evaluation
+Execute the run wrapper to launch IR translation, normalization, graph semantic parsing, WL fingerprinting, similarity comparison, and metric evaluation:
+- **Windows**: Run `run.bat` in your terminal.
+- **Linux/macOS/WSL**: Run `./run.sh` in your bash terminal.
+
+**Expected Verification Output**:
+The terminal will display the step-by-step compilation, normalization, and fingerprinting progress, followed by detected clone pairs, and print the evaluation summary:
+```json
+{
+    "precision": 0.9090909090909091,
+    "recall": 1.0,
+    "f1_score": 0.9523809523809523,
+    "true_positives": 10,
+    "false_positives": 1,
+    "false_negatives": 0
+}
+```
+This confirms that the custom graph pipeline successfully achieves a F1-score of **95.24%** (under fallback mode) and **100.00%** (under native mode with clang/rustc compilers installed).
