@@ -1,10 +1,11 @@
-fn reverse_string(s: &str) -> String {
-    s.chars().rev().collect()
+fn factorial(n: i32) -> i32 {
+    if n <= 1 {
+        1
+    } else {
+        n * factorial(n - 1)
+    }
 }
 
 fn main() {
-    let text = "CrossLanguage";
-    let reversed = reverse_string(text);
-
-    println!("{}", reversed);
+    println!("{}", factorial(5));
 }

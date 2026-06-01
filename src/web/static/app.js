@@ -17,100 +17,29 @@ const state = {
     // Code templates
     templates: {
         factorial: {
-            lang1: 'c',
-            lang2: 'rust',
-            file1: 'factorial.c',
-            file2: 'factorial.rs',
-            code1: `#include <stdio.h>
-
-int factorial(int n) {
-    if (n <= 1) return 1;
-    return n * factorial(n - 1);
-}
-
-int main() {
-    printf("%d\\n", factorial(5));
-    return 0;
-}`,
-            code2: `fn factorial(n: i32) -> i32 {
-    if n <= 1 {
-        1
-    } else {
-        n * factorial(n - 1)
-    }
-}
-
-fn main() {
-    println!("{}", factorial(5));
-}`
+            c: `#include <stdio.h>\n\nint factorial(int n) {\n    if (n <= 1) return 1;\n    return n * factorial(n - 1);\n}\n\nint main() {\n    printf("%d\\n", factorial(5));\n    return 0;\n}`,
+            cpp: `#include <iostream>\n\nint factorial(int n) {\n    if (n <= 1) return 1;\n    return n * factorial(n - 1);\n}\n\nint main() {\n    std::cout << factorial(5) << std::endl;\n    return 0;\n}`,
+            rust: `fn factorial(n: i32) -> i32 {\n    if n <= 1 {\n        return 1;\n    }\n    n * factorial(n - 1)\n}\n\nfn main() {\n    println!("{}", factorial(5));\n}`
         },
         fibonacci: {
-            lang1: 'c',
-            lang2: 'rust',
-            file1: 'fibonacci.c',
-            file2: 'fibonacci.rs',
-            code1: `#include <stdio.h>
-
-int fib(int n) {
-    if (n <= 1) return n;
-    return fib(n - 1) + fib(n - 2);
-}
-
-int main() {
-    printf("%d\\n", fib(10));
-    return 0;
-}`,
-            code2: `fn fib(n: i32) -> i32 {
-    if n <= 1 {
-        n
-    } else {
-        fib(n - 1) + fib(n - 2)
-    }
-}
-
-fn main() {
-    println!("{}", fib(10));
-}`
+            c: `#include <stdio.h>\n\nint fibonacci(int n) {\n    if (n <= 1) return n;\n    return fibonacci(n - 1) + fibonacci(n - 2);\n}\n\nint main() {\n    printf("%d\\n", fibonacci(6));\n    return 0;\n}`,
+            cpp: `#include <iostream>\n\nint fibonacci(int n) {\n    if (n <= 1) return n;\n    return fibonacci(n - 1) + fibonacci(n - 2);\n}\n\nint main() {\n    std::cout << fibonacci(6) << std::endl;\n    return 0;\n}`,
+            rust: `fn fibonacci(n: i32) -> i32 {\n    if n <= 1 {\n        return n;\n    }\n    fibonacci(n - 1) + fibonacci(n - 2)\n}\n\nfn main() {\n    println!("{}", fibonacci(6));\n}`
         },
         bubblesort: {
-            lang1: 'cpp',
-            lang2: 'c',
-            file1: 'bubblesort.cpp',
-            file2: 'bubblesort.c',
-            code1: `#include <iostream>
-#include <vector>
-
-void bubbleSort(std::vector<int>& arr) {
-    int n = arr.size();
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = 0; j < n - i - 1; j++) {
-            if (arr[j] > arr[j + 1]) {
-                std::swap(arr[j], arr[j + 1]);
-            }
-        }
-    }
-}`,
-            code2: `#include <stdio.h>
-
-void bubbleSort(int arr[], int n) {
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = 0; j < n - i - 1; j++) {
-            if (arr[j] > arr[j + 1]) {
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
-            }
-        }
-    }
-}`
+            c: `#include <stdio.h>\n\nvoid bubbleSort(int arr[], int n) {\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < n - i - 1; j++) {\n            if (arr[j] > arr[j + 1]) {\n                int temp = arr[j];\n                arr[j] = arr[j + 1];\n                arr[j + 1] = temp;\n            }\n        }\n    }\n}`,
+            cpp: `#include <iostream>\n#include <vector>\n\nvoid bubbleSort(std::vector<int>& arr) {\n    int n = arr.size();\n    for (int i = 0; i < n; i++) {\n        for (int j = 0; j < n - i - 1; j++) {\n            if (arr[j] > arr[j + 1]) {\n                std::swap(arr[j], arr[j + 1]);\n            }\n        }\n    }\n}`,
+            rust: `fn bubbleSort(arr: &mut [i32], n: usize) {\n    for i in 0..n {\n        for j in 0..(n - i - 1) {\n            if arr[j] > arr[j + 1] {\n                let temp = arr[j];\n                arr[j] = arr[j + 1];\n                arr[j + 1] = temp;\n            }\n        }\n    }\n}`
         },
-        custom: {
-            lang1: 'c',
-            lang2: 'cpp',
-            file1: 'scratch.c',
-            file2: 'scratch.cpp',
-            code1: `// Write or paste custom code here`,
-            code2: `// Write or paste custom code here`
+        isPrime: {
+            c: `#include <stdio.h>\n\nint isPrime(int n) {\n    if (n <= 1) return 0;\n    for (int i = 2; i * i <= n; i++) {\n        if (n % i == 0) return 0;\n    }\n    return 1;\n}`,
+            cpp: `#include <iostream>\n\nbool isPrime(int n) {\n    if (n <= 1) return false;\n    for (int i = 2; i * i <= n; i++) {\n        if (n % i == 0) return false;\n    }\n    return true;\n}`,
+            rust: `fn isPrime(n: i32) -> i32 {\n    if n <= 1 {\n        return 0;\n    }\n    let mut i = 2;\n    while i * i <= n {\n        if n % i == 0 {\n            return 0;\n        }\n        i += 1;\n    }\n    1\n}`
+        },
+        reverseString: {
+            c: `#include <stdio.h>\n#include <string.h>\n\nvoid reverse_string(char* s) {\n    int len = strlen(s);\n    for (int i = 0; i < len / 2; i++) {\n        char temp = s[i];\n        s[i] = s[len - i - 1];\n        s[len - i - 1] = temp;\n    }\n}`,
+            cpp: `#include <iostream>\n#include <string>\n\nstd::string reverse_string(std::string s) {\n    int len = s.length();\n    for (int i = 0; i < len / 2; i++) {\n        char temp = s[i];\n        s[i] = s[len - i - 1];\n        s[len - i - 1] = temp;\n    }\n    return s;\n}`,
+            rust: `fn reverse_string(s: &str) -> String {\n    let mut chars: Vec<char> = s.chars().collect();\n    let len = chars.len();\n    let mut i = 0;\n    while i < len / 2 {\n        let temp = chars[i];\n        chars[i] = chars[len - i - 1];\n        chars[len - i - 1] = temp;\n        i += 1;\n    }\n    chars.into_iter().collect()\n}`
         }
     }
 };
@@ -120,7 +49,10 @@ void bubbleSort(int arr[], int n) {
 // ==========================================
 window.addEventListener('DOMContentLoaded', () => {
     // 1. Initial Template Load
-    loadTemplate('factorial');
+    document.getElementById('template-select-1').value = 'factorial';
+    document.getElementById('template-select-2').value = 'factorial';
+    loadEditorTemplate(1, 'factorial');
+    loadEditorTemplate(2, 'factorial');
     
     // 2. Fetch Corpus Explorer files
     fetchCorpusFiles();
@@ -189,6 +121,17 @@ function switchVisTab(visTabId) {
     
     document.getElementById(`vis-${visTabId}`).classList.add('active');
     state.activeVisTab = visTabId;
+    
+    // Fit and redraw the visible vis.js networks to center them in the container
+    setTimeout(() => {
+        Object.values(state.networks).forEach(net => {
+            if (net) {
+                net.setSize('100%', '100%');
+                net.redraw();
+                net.fit();
+            }
+        });
+    }, 50);
 }
 
 function switchInspectorTab(insTabId) {
@@ -210,29 +153,25 @@ function switchInspectorTab(insTabId) {
 // ==========================================
 // Control Operations
 // ==========================================
-function loadTemplate(name = null) {
-    const select = document.getElementById('template-select');
-    const selectedName = name || select.value;
-    
-    if (name) select.value = name;
-    
-    const t = state.templates[selectedName];
+function loadEditorTemplate(id, name) {
+    const lang = document.getElementById(`lang-select-${id}`).value;
+    const t = state.templates[name];
     if (!t) return;
     
-    // Languages
-    document.getElementById('lang-select-1').value = t.lang1;
-    document.getElementById('lang-select-2').value = t.lang2;
-    changeLanguage(1, t.lang1, t.file1);
-    changeLanguage(2, t.lang2, t.file2);
+    const code = t[lang];
+    if (!code) {
+        showToast(`Template not available in ${lang.toUpperCase()}`, 'error');
+        return;
+    }
     
-    // Code
-    document.getElementById('code-textarea-1').value = t.code1;
-    document.getElementById('code-textarea-2').value = t.code2;
+    document.getElementById(`code-textarea-${id}`).value = code;
     
-    syncCodeDisplay(1);
-    syncCodeDisplay(2);
+    // Update filename title
+    const ext = lang === 'rust' ? 'rs' : (lang === 'cpp' ? 'cpp' : 'c');
+    document.getElementById(`file-title-${id}`).textContent = `${name}.${ext}`;
     
-    showToast(`Loaded algorithm template: ${selectedName.toUpperCase()}`, 'info');
+    syncCodeDisplay(id);
+    showToast(`Loaded ${name.toUpperCase()} in Editor ${id}`, 'info');
 }
 
 function changeLanguage(id, lang, filename = null) {
@@ -244,10 +183,21 @@ function changeLanguage(id, lang, filename = null) {
     badge.className = `file-badge badge-${lang}`;
     badge.textContent = lang.toUpperCase();
     
-    // Update filename title if not provided
+    // Check if an algorithm template is selected
+    const select = document.getElementById(`template-select-${id}`);
+    const currentAlg = select.value;
+    
+    if (currentAlg && state.templates[currentAlg]) {
+        const code = state.templates[currentAlg][lang];
+        if (code) {
+            textarea.value = code;
+        }
+    }
+    
+    // Update filename title
     if (!filename) {
         const ext = lang === 'rust' ? 'rs' : (lang === 'cpp' ? 'cpp' : 'c');
-        const alg = document.getElementById('template-select').value;
+        const alg = currentAlg || 'scratch';
         title.textContent = `${alg}.${ext}`;
     } else {
         title.textContent = filename;
@@ -531,9 +481,10 @@ function renderVisNetwork(containerId, stateNetId, graphData, type = 'cfg') {
     const net = new vis.Network(container, data, options);
     state.networks[stateNetId] = net;
     
-    // Stop physics once layout stabilizes to avoid constant movements
+    // Stop physics once layout stabilizes and fit network perfectly inside container bounds
     net.on('stabilizationFinished', () => {
         net.setOptions({ physics: false });
+        net.fit();
     });
 }
 

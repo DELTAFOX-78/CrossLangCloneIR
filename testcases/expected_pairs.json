@@ -98,5 +98,10 @@
         "file1": "testcases/c/is_prime.c",
         "file2": "testcases/c/reverse_string.c",
         "expected_similarity": "not_clone"
+    },
+    {
+        "file1": "corpus/c/factorial.c",
+        "file2": "corpus/rust/factorial.rs",
+        "expected_similarity": "strong_clone"
     }
 ]

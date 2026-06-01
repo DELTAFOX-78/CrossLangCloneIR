@@ -69,15 +69,6 @@
                         <h3><i class="fa-solid fa-sliders"></i> Comparison Settings</h3>
                         <hr class="divider">
                         
-                        <div class="control-group">
-                            <label for="template-select">Load Standard Algorithm</label>
-                            <select id="template-select" onchange="loadTemplate()">
-                                <option value="factorial" selected>Factorial (C, C++, Rust)</option>
-                                <option value="fibonacci">Fibonacci Series (Recursive)</option>
-                                <option value="bubblesort">Bubble Sort (Iterative Array)</option>
-                                <option value="custom">Custom Scratchpad...</option>
-                            </select>
-                        </div>
                         
                         <div class="control-group">
                             <label>Similarity Threshold</label>
@@ -113,6 +104,14 @@
                                 </div>
                                 <div class="pane-actions">
                                     <input type="file" id="file-input-1" style="display:none;" onchange="handleFileSelected(1, this)">
+                                    <select id="template-select-1" onchange="loadEditorTemplate(1, this.value)" style="margin-right: 6px; padding: 4px 8px; font-size: 11px; font-weight: 600; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.15); background: rgba(0, 0, 0, 0.5); color: #fff;">
+                                        <option value="" disabled selected>Load Algorithm...</option>
+                                        <option value="factorial">Factorial</option>
+                                        <option value="fibonacci">Fibonacci</option>
+                                        <option value="bubblesort">Bubble Sort</option>
+                                        <option value="isPrime">Prime Checker</option>
+                                        <option value="reverseString">String Reversal</option>
+                                    </select>
                                     <button class="btn-secondary" style="padding: 4px 8px; font-size: 11px; font-weight: 600;" title="Upload custom code file" onclick="triggerFileUploader(1)">
                                         <i class="fa-solid fa-upload"></i> Upload
                                     </button>
@@ -137,6 +136,14 @@
                                 </div>
                                 <div class="pane-actions">
                                     <input type="file" id="file-input-2" style="display:none;" onchange="handleFileSelected(2, this)">
+                                    <select id="template-select-2" onchange="loadEditorTemplate(2, this.value)" style="margin-right: 6px; padding: 4px 8px; font-size: 11px; font-weight: 600; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.15); background: rgba(0, 0, 0, 0.5); color: #fff;">
+                                        <option value="" disabled selected>Load Algorithm...</option>
+                                        <option value="factorial">Factorial</option>
+                                        <option value="fibonacci">Fibonacci</option>
+                                        <option value="bubblesort">Bubble Sort</option>
+                                        <option value="isPrime">Prime Checker</option>
+                                        <option value="reverseString">String Reversal</option>
+                                    </select>
                                     <button class="btn-secondary" style="padding: 4px 8px; font-size: 11px; font-weight: 600;" title="Upload custom code file" onclick="triggerFileUploader(2)">
                                         <i class="fa-solid fa-upload"></i> Upload
                                     </button>
